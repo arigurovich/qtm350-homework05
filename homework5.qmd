@@ -1,0 +1,148 @@
+---
+title: "World Development Indicators Analysis (2022)"
+author: "Ari Gurovich"
+date: "10/6/25"
+format:
+  html:
+    toc: true
+    theme: cosmo
+    embed-resources: true
+  pdf:
+    toc: true
+    geometry:
+      - top=30mm
+      - left=30mm
+bibliography: references.bib
+---
+
+## Introduction
+
+The data for this analysis comes from the World Development Indicators database [@worldbank_wdi_2022].
+
+### Loading
+```{python}
+#| label: load-data
+#| echo: true
+
+import pandas as pd
+
+wdi = pd.read_csv('wdi.csv')
+
+wdi.head()
+
+#| label: setup
+#| include: false
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_style("whitegrid")
+```
+
+
+### Life Expectancy analysis:
+```{python}
+life_exp_series = wdi['life_expectancy']
+print("Life Expectancy (Years):")
+print(f"- Mean: {life_exp_series.mean():.2f}")
+print(f"- Median: {life_exp_series.median():.2f}")
+print(f"- Standard Deviation: {life_exp_series.std():.2f}")
+```
+
+```{python}
+#| label: fig-life-exp-dist
+#| echo: false
+#| fig-cap: "Distribution of Life Expectancy in 2022."
+
+plt.figure(figsize=(10, 6))
+sns.histplot(life_exp_series, kde=True, bins=30, color='green')
+plt.title('Distribution of Life Expectancy (2022)')
+plt.xlabel('Life Expectancy at Birth (Years)')
+plt.ylabel('Number of Countries')
+plt.show()
+```
+
+From the summary statistics in **@tbl-summary**, we see that the mean life expectancy of the countries is 72.42, the median is 73.51, and the standard deviation is 7.71. In **@fig-life-exp-dist**, we see a longer and thiner tail of life expectancies on the lower end, and a shorter and thicker tail of life expectancies on the high end. In developmental economics, the Preston Curve tells us that life expectancy does not have a linear relationship to GDP per capita [@preston_1975].
+
+### Inflation analysis:
+```{python}
+inf_rate_series = wdi['inflation_rate']
+print("Inflation Rate (Annual %):")
+print(f"- Mean: {inf_rate_series.mean():.2f}")
+print(f"- Median: {inf_rate_series.median():.2f}")
+print(f"- Standard Deviation: {inf_rate_series.std():.2f}")
+```
+```{python}
+
+#| label: fig-inflation-swarm
+#| echo: false
+#| fig-cap: "A swarm plot of 2022 inflation rates, showing the precise location of each country."
+
+plt.figure(figsize=(12, 4))
+
+# Create the horizontal swarm plot
+sns.swarmplot(x=wdi['inflation_rate'], color='purple', size=4)
+
+# Improve readability
+plt.title('Distribution of Inflation Rate (2022)')
+plt.xlabel('Inflation, Consumer Prices (Annual %)')
+
+plt.tight_layout()
+plt.show()
+```
+
+From the summary statistics in **@tbl-summary**, we see that the mean inflation rate is 12.49 percent, the median is 7.97 percent, and the standard deviation is 19.68 percent. In **@fig-inflation-swarm**, we see a vaguely normal distribution. Most of the data points are clustered between 0 and 20 percent annual inflation, with a few outliers on the right tail. Economists have found that outlier inflation has adverse economic effects [@barro_1996].
+
+### GDP Per Capita analysis:
+```{python}
+gdp_series = wdi['gdp_per_capita']
+print("GDP Per Capita (USD):")
+print(f"- Mean: ${gdp_series.mean():,.2f}")
+print(f"- Median: ${gdp_series.median():,.2f}")
+print(f"- Standard Deviation: ${gdp_series.std():,.2f}")
+```
+```{python}
+#| label: fig-gdp-dist
+#| echo: false
+#| fig-cap: "Distribution of GDP Per Capita in 2022."
+
+plt.figure(figsize=(10, 6))
+sns.histplot(gdp_series, kde=True, bins=30)
+plt.title('Distribution of GDP Per Capita (2022)')
+plt.xlabel('GDP Per Capita (Current USD)')
+plt.ylabel('Number of Countries')
+plt.show()
+```
+
+From the summary statistics in **@tbl-summary**, we see that the mean GDP per capita of the countries is $20,345.71, the median is $7,587.59, and standard deviation is $31,308.94. In **@fig-gdp-dist**, we observe that the GDP per capita of the countries in the data set follow a power law distributions. Most of the countries are clustered in the low GDP per capita buckets, a small number a clustered in middle GDP per capita buckets, and there are a tiny number of outliers with very high GDP per capita. 
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics for Key Indicators (2022)."
+#| results: asis
+#| echo: false
+
+indicators = {
+    'gdp_per_capita': 'GDP per Capita ($)',
+    'life_expectancy': 'Life Expectancy (Years)',
+    'inflation_rate': 'Inflation Rate (%)'
+}
+stats_to_calc = ['mean', 'median', 'std']
+
+summary_data = {}
+for indicator_code, indicator_name in indicators.items():
+    summary_data[indicator_name] = [
+        wdi[indicator_code].mean(),
+        wdi[indicator_code].median(),
+        wdi[indicator_code].std()
+    ]
+
+summary_df = pd.DataFrame(
+    summary_data,
+    index=['Mean', 'Median', 'Standard Deviation']
+)
+
+print(summary_df.to_markdown(floatfmt=",.2f"))
+```
+
+## References

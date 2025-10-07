@@ -1,0 +1,84 @@
+---
+title: "World Development Indicators Analysis (2022)"
+author: "Ari Gurovich"
+date: "today"
+format: 
+  revealjs:
+    theme: sky
+    slide-number: true
+    transition: slide
+    transition-speed: fast
+
+---
+
+## Introduction
+
+This presentation will cover the analysis of three key metrics from the World Development Indicators 2022 dataset:
+
+-   Life Expectancy
+-   Inflation Rate
+-   GDP Per Capita
+
+---
+
+## Life Expectancy Analysis
+
+We see that the mean life expectancy of the countries is 72.42, the median is 73.51, and the standard deviation is 7.71. We see a longer and thiner tail of life expectancies on the lower end, and a shorter and thicker tail of life expectancies on the high end.
+
+```{python}
+#| label: fig-life-exp-slides
+#| echo: false
+#| fig-cap: "Distribution of Life Expectancy in 2022."
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_style("whitegrid")
+wdi = pd.read_csv('wdi.csv')
+
+plt.figure(figsize=(8, 4.5))
+sns.histplot(wdi['life_expectancy'], kde=True, bins=30, color='green')
+plt.title('Distribution of Life Expectancy (2022)')
+plt.xlabel('Life Expectancy at Birth (Years)')
+plt.ylabel('Number of Countries')
+plt.show()
+```
+
+---
+
+## Inflation Analysis
+
+We see that the mean inflation rate is 12.49 percent, the median is 7.97 percent, and the standard deviation is 19.68 percent. We see a vaguely normal distribution. Most of the data points are clustered between 0 and 20 percent annual inflation, with a few outliers on the right tail.
+
+```{python}
+#| label: fig-inflation-slides
+#| echo: false
+#| fig-cap: "A swarm plot of 2022 inflation rates."
+
+plt.figure(figsize=(9, 4.5))
+sns.swarmplot(x=wdi['inflation_rate'], color='purple', size=4)
+plt.title('Distribution of Inflation Rate (2022)')
+plt.xlabel('Inflation, Consumer Prices (Annual %)')
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## GDP Per Capita Analysis
+
+We see that the mean GDP per capita of the countries is $20,345.71, the median is $7,587.59, and standard deviation is $31,308.94. We observe that the GDP per capita of the countries in the data set follow a power law distributions.  
+
+```{python}
+#| label: fig-gdp-slides
+#| echo: false
+#| fig-cap: "Distribution of GDP Per Capita in 2022."
+
+plt.figure(figsize=(8, 4.5))
+sns.histplot(wdi['gdp_per_capita'], kde=True, bins=30)
+plt.title('Distribution of GDP Per Capita (2022)')
+plt.xlabel('GDP Per Capita (Current USD)')
+plt.ylabel('Number of Countries')
+plt.show()
+```
