@@ -8,8 +8,11 @@ format:
     slide-number: true
     transition: slide
     transition-speed: fast
-
----
+  pdf:
+    theme: sky
+    slide-number: true
+    transition: slide
+    transition-speed: fast
 
 ## Introduction
 
